@@ -120,7 +120,7 @@ Today you can:
 4. Ask the AI assistant for help  
 
 Code lives on GitHub:  
-https://github.com/ofkurban/kanban_studio_with_AI_help  
+https://github.com/ofkurban/Project-Management-MVP-web-app  
 
 Run it locally at:  
 http://localhost:8000  
