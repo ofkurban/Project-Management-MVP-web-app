@@ -1,36 +1,54 @@
 # The Project Management MVP web app
 
+## Status
+
+MVP complete (Parts 1-10 in `docs/PLAN.md`). Runs locally in Docker at `http://localhost:8000`.
+
 ## Business Requirements
 
-This project is building a Project Management App. Key features:
-- A user can sign in
+Key features (implemented):
+- A user can sign in (`user` / `password`) and log out
 - When signed in, the user sees a Kanban board representing their project
 - The Kanban board has fixed columns that can be renamed
-- The cards on the Kanban board can be moved with drag and drop, and edited
-- There is an AI chat feature in a sidebar; the AI is able to create / edit / move one or more cards
+- Cards can be created, edited, deleted, and moved with drag and drop (drag handle on each card)
+- AI chat sidebar can answer questions and create / edit / move cards via structured board updates
+- Board state persists in SQLite across refresh
 
 ## Limitations
 
-For the MVP, there will only be a user sign in (hardcoded to 'user' and 'password') but the database will support multiple users for future.
-
-For the MVP, there will only be 1 Kanban board per signed in user.
-
-For the MVP, this will run locally (in a docker container)
+- Demo auth only (`user` / `password`); DB has a `users` table for future multi-user support
+- One Kanban board per signed-in user
+- Runs locally in a Docker container
+- OpenRouter free models only (~50 requests/day without credits)
 
 ## Technical Decisions
 
-- NextJS frontend
-- Python FastAPI backend, including serving the static NextJS site at /
-- Everything packaged into a Docker container
-- Use "uv" as the package manager for python in the Docker container
-- Use OpenRouter for the AI calls. An OPENROUTER_API_KEY is in .env in the project root
-- Use `openai/gpt-oss-120b` as the model
-- Use SQLLite local database for the database, creating a new db if it doesn't exist
-- Start and Stop server scripts for Mac, PC, Linux in scripts/
+- Next.js frontend (static export), served by FastAPI at `/`
+- Python FastAPI backend (`uv` for deps)
+- Single Docker image; start/stop scripts in `scripts/` (Mac, PC, Linux)
+- SQLite at `./data/app.db` (container `/data/app.db`), create + seed if missing
+- Board stored as JSON blob (`BoardData` shape) — see `docs/DATABASE.md`
+- OpenRouter AI: `OPENROUTER_API_KEY` in root `.env`; model `openai/gpt-oss-20b:free`
+- Session cookie auth (`pm_session`); host URL `http://localhost:8000`
 
-## Starting Point
+## What was built
 
-A working MVP of the frontend has been built and is already in frontend. This is not yet designed for the Docker setup. It's a pure frontend-only demo.
+| Area | Details |
+|------|---------|
+| Docker | Root `Dockerfile` builds frontend `out/` + FastAPI; `scripts/start.*` / `stop.*` |
+| Backend | Auth, board GET/PUT, AI ping, chat with structured `{ reply, board }` |
+| Frontend | Login gate, persistent Kanban, card edit, AI sidebar |
+| Docs | `docs/PLAN.md` (executed), `docs/DATABASE.md` (approved schema) |
+| Tests | Frontend Vitest + Playwright; backend Pytest |
+
+## Layout
+
+- `frontend/` — Next.js UI (see `frontend/AGENTS.md`)
+- `backend/` — FastAPI + SQLite + OpenRouter (see `backend/AGENTS.md`)
+- `scripts/` — start/stop helpers (see `scripts/AGENTS.md`)
+- `docs/` — plan and database design
+- `data/` — SQLite volume (gitignored except `.gitignore`)
+- `.env` — secrets (gitignored); copy from `.env.example`
 
 ## Color Scheme
 
@@ -49,5 +67,4 @@ A working MVP of the frontend has been built and is already in frontend. This is
 
 ## Working documentation
 
-All documents for planning and executing this project will be in the docs/ directory.
-Please review the docs/PLAN.md document before proceeding.
+Planning and design docs live in `docs/`. Start with `docs/PLAN.md` and `docs/DATABASE.md` before changing architecture.

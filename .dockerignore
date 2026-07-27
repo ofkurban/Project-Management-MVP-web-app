@@ -1,0 +1,14 @@
+.env
+.git
+**/__pycache__/
+**/*.pyc
+**/.venv/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+data/
+docs/
+scripts/
+*.md
